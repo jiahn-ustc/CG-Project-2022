@@ -20,7 +20,7 @@ public class MouseLook : MonoBehaviour
         playerBody = Player.transform;
         //设置相机位置
         Vector3 pos = transform.position;
-        Debug.Log(transform.position);
+        
         pos.y = playerBody.position.y+1.8f;
         transform.position = pos;
 
@@ -33,8 +33,7 @@ public class MouseLook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(playerBody);
-        Debug.Log(transform.position);
+        
         float mouseX = Input.GetAxis("Mouse X")*mouseSensitivity*Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity*Time.deltaTime;
         xRotation -= mouseY;//将上下旋转的轴值进行累减
