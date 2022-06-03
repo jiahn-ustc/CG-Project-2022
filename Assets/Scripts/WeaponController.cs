@@ -16,6 +16,14 @@ public class WeaponController : MonoBehaviour
 
     private bool GunShootInput;//是否按下鼠标左键
 
+    public ParticleSystem muzzleFlash;//枪口火焰特效
+    public Light muzzleFlashLight;//枪口火焰灯光
+    //public GameObject hitParticle;//子弹击中特效
+    public GameObject bullectHole;//弹孔
+
+    private AudioSource audioSource;
+    public AudioClip AK47SoundClip;//枪射击音效
+
     [Header("键位设置")]
     [SerializeField][Tooltip("填装子弹按键")]private KeyCode reloadInputName;//换弹
 
@@ -26,6 +34,7 @@ public class WeaponController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         bulletLeft = 50;
         shooterPoint = GameObject.Find("ShootPoint").transform;
         currentBullets = bulletsMag;
@@ -37,9 +46,13 @@ public class WeaponController : MonoBehaviour
     void Update()
     {
         GunShootInput = Input.GetMouseButton(0);
-        if(GunShootInput)
+        if(GunShootInput && currentBullets>0)
         {
             GunFire(); 
+        }
+        else
+        {
+            muzzleFlashLight.enabled = false;
         }
         if(Input.GetKeyDown(reloadInputName)&&currentBullets<bulletsMag && bulletLeft>0)
         {
@@ -57,8 +70,17 @@ public class WeaponController : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(shooterPoint.position,shootDirection,out hit,range))
         {
-            Debug.Log(hit.transform.name + "打到了"); 
+            //   Debug.Log(hit.transform.name + "打到了"); 
+            //GameObject hitParticleEffect= Instantiate(hitParticle, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));//实例出子弹击中的特效
+            GameObject bullectHoleEffect= Instantiate(bullectHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal)) ;//实例出弹孔的特效
+
+            //Destroy(hitParticleEffect, 1f);
+            Destroy(bullectHoleEffect, 3f);
         }
+        PlayShootSound();//播放射击音效
+        muzzleFlash.Play();//播放射击火花
+        muzzleFlashLight.enabled = true;//播放枪的灯光
+
         currentBullets--;
         UpdateUI();
         fireTimer = 0f;
@@ -83,5 +105,11 @@ public class WeaponController : MonoBehaviour
             bulletLeft = 0;
         }
         UpdateUI();
+    }
+    //播放射击音效
+    public void PlayShootSound()
+    {
+        audioSource.clip = AK47SoundClip;
+        audioSource.Play();
     }
 }

@@ -23,7 +23,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField][Tooltip("奔跑按键")]private KeyCode runInputName;
     [SerializeField] [Tooltip("跳跃按键")] private string jumpInputName;
 
-
+    [Header("声音设置")]
+    [SerializeField] private AudioSource audioSource;//声音源
+    public AudioClip walkingSound;
+    public AudioClip runningSound;
 
 
     private void Start()
@@ -36,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
         jumpForce = 1f;
         gravity = -20f;
 
-
+        audioSource = GetComponent<AudioSource>();//得到声音源组件
     }
     private void Update()
     {
@@ -61,6 +64,27 @@ public class PlayerMovement : MonoBehaviour
         }
         characterController.Move(velocity * Time.deltaTime);
         Jump();
+        PlayMoveSound();
+        //Debug.Log("是否正在播放音乐" + audioSource.isPlaying);
+    }
+
+    //播放角色移动音效
+    public void PlayMoveSound()
+    {
+        //角色在地面上并且有移动速度
+        if(isGround && moveDirection.sqrMagnitude>0.9f)
+        {
+            audioSource.clip = isRun ? runningSound : walkingSound;//指定播放的音效
+            if(!audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+        }
+        else
+        {
+            if (audioSource.isPlaying)
+                audioSource.Pause();
+        }
     }
 
     public void Jump()
@@ -71,6 +95,7 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);//跳的瞬间，velocity.y为一正值
         }
     }
+    //判断角色是否在地面上
     public void CheckGround()
     {
         isGround = characterController.isGrounded;
