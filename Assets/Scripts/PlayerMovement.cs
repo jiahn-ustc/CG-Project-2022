@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public float walkSpeed = 5f;
     public float runSpeed = 10f;
     public bool isRun;
+    public bool isWalk;
     public Vector3 moveDirection;//ÒÆ¶¯·½Ïò
 
     public bool isJump;
@@ -52,7 +53,8 @@ public class PlayerMovement : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
 
-        isRun = Input.GetKey(runInputName);
+        isRun = Input.GetKey(runInputName) && (Mathf.Abs(h) > 0 || Mathf.Abs(v) > 0);
+        isWalk = (Mathf.Abs(h) > 0 || Mathf.Abs(v) > 0) ? true : false;
         speed = isRun ? runSpeed : walkSpeed;
 
         moveDirection = (transform.right * h + transform.forward * v).normalized;

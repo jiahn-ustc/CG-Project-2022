@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class WeaponController : MonoBehaviour
 {
+    public PlayerMovement PM;
     public Transform shooterPoint;//射击位置
     public int bulletsMag = 31;//一个弹夹子弹的数量
     public int range = 100;//射程
@@ -18,14 +19,21 @@ public class WeaponController : MonoBehaviour
 
     public ParticleSystem muzzleFlash;//枪口火焰特效
     public Light muzzleFlashLight;//枪口火焰灯光
-    //public GameObject hitParticle;//子弹击中特效
+    public GameObject hitParticle;//子弹击中特效
     public GameObject bullectHole;//弹孔
 
     private AudioSource audioSource;
     public AudioClip AK47SoundClip;//枪射击音效
+    public AudioClip reloadAmmoClip;//换弹音效
+
+    public bool isReload;//是否正在换弹
+    public bool isInspect;//是否正在检视
+
+    private Animator anim;
 
     [Header("键位设置")]
     [SerializeField][Tooltip("填装子弹按键")]private KeyCode reloadInputName;//换弹
+    [SerializeField] [Tooltip("检视武器按键")] private KeyCode inspectInputName;//换弹
 
     [Header("UI设置")]
     public Image CrossHairUI;
@@ -34,11 +42,13 @@ public class WeaponController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        anim = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         bulletLeft = 50;
         shooterPoint = GameObject.Find("ShootPoint").transform;
         currentBullets = bulletsMag;
         reloadInputName = KeyCode.R;
+        inspectInputName = KeyCode.F;
         UpdateUI();
     }
 
@@ -54,10 +64,31 @@ public class WeaponController : MonoBehaviour
         {
             muzzleFlashLight.enabled = false;
         }
+        //获取当前播放动画
+        AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
+        if (info.IsName("reload"))
+        {
+            isReload = true;
+        }
+        else
+            isReload = false;
         if(Input.GetKeyDown(reloadInputName)&&currentBullets<bulletsMag && bulletLeft>0)
         {
             Reload();
         }
+        if (info.IsName("inspect_weapon"))
+        {
+            isInspect = true;
+        }
+        else
+            isInspect = false;
+        if(Input.GetKeyDown(inspectInputName))
+        {
+            //检视武器动画
+            anim.SetTrigger("Inspect");
+        }
+        anim.SetBool("Run", PM.isRun);
+        anim.SetBool("Walk", PM.isWalk);
 
         if (fireTimer < fireRate)
             fireTimer += Time.deltaTime;
@@ -65,16 +96,16 @@ public class WeaponController : MonoBehaviour
 
     public void GunFire()
     {
-        if (fireTimer < fireRate || currentBullets<=0) return;
+        if (fireTimer < fireRate || currentBullets<=0 || isReload||PM.isRun||isInspect) return;
         Vector3 shootDirection = shooterPoint.forward;//射击方向
         RaycastHit hit;
         if(Physics.Raycast(shooterPoint.position,shootDirection,out hit,range))
         {
             //   Debug.Log(hit.transform.name + "打到了"); 
-            //GameObject hitParticleEffect= Instantiate(hitParticle, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));//实例出子弹击中的特效
+            GameObject hitParticleEffect= Instantiate(hitParticle, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));//实例出子弹击中的特效
             GameObject bullectHoleEffect= Instantiate(bullectHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal)) ;//实例出弹孔的特效
 
-            //Destroy(hitParticleEffect, 1f);
+            Destroy(hitParticleEffect, 1f);
             Destroy(bullectHoleEffect, 3f);
         }
         PlayShootSound();//播放射击音效
@@ -94,6 +125,7 @@ public class WeaponController : MonoBehaviour
     public void Reload()
     {
         int willToLoad = bulletsMag - currentBullets;
+        PlayReloadAnimation();
         if(willToLoad<=bulletLeft)
         {
             bulletLeft -= willToLoad;
@@ -105,6 +137,13 @@ public class WeaponController : MonoBehaviour
             bulletLeft = 0;
         }
         UpdateUI();
+    }
+    //播放装弹动画
+    public void PlayReloadAnimation()
+    {
+        anim.Play("reload", 0, 0);
+        audioSource.clip = reloadAmmoClip;
+        audioSource.Play();
     }
     //播放射击音效
     public void PlayShootSound()

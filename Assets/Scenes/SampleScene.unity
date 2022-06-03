@@ -276,6 +276,7 @@ MonoBehaviour:
   walkSpeed: 10
   runSpeed: 17
   isRun: 0
+  isWalk: 0
   moveDirection: {x: 0, y: 0, z: 0}
   isJump: 0
   jumpForce: 3
@@ -458,6 +459,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 422923594}
+  - component: {fileID: 422923595}
   m_Layer: 0
   m_Name: AK47
   m_TagString: Untagged
@@ -482,6 +484,22 @@ Transform:
   m_Father: {fileID: 951348081}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &422923595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 422923593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb01d75511d9b7541a8250e0eedeb032, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amount: 0
+  smoothAmount: 0
+  maxAmount: 0
+  startPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,6 +818,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 182b7f11db452bc458d35a6c9eced06f, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 4cfad7305e2ad754a8ef672e546a4b54, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 182b7f11db452bc458d35a6c9eced06f, type: 3}
 --- !u!4 &993014199 stripped
@@ -904,6 +926,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18dd6910aa1fd494297ecca6a1f1841e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PM: {fileID: 249689042}
   shooterPoint: {fileID: 0}
   bulletsMag: 31
   range: 100
@@ -912,9 +935,14 @@ MonoBehaviour:
   fireRate: 0.1
   muzzleFlash: {fileID: 1089293217}
   muzzleFlashLight: {fileID: 1740798018}
+  hitParticle: {fileID: 1715296062355570, guid: 99055ba5ee0f90841a04964b1517fbae, type: 3}
   bullectHole: {fileID: 1803386188552682, guid: 752f929558b1ee3499fa00be3f646996, type: 3}
   AK47SoundClip: {fileID: 8300000, guid: 38b450e2adcb6f542acc8c1d423bd8dc, type: 3}
+  reloadAmmoClip: {fileID: 8300000, guid: 5b907074256e36d41b92e89fb0790633, type: 3}
+  isReload: 0
+  isInspect: 0
   reloadInputName: 0
+  inspectInputName: 0
   CrossHairUI: {fileID: 1950017748}
   AmmoTextUI: {fileID: 1001751110}
 --- !u!82 &1079005783
