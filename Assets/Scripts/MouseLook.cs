@@ -18,11 +18,12 @@ public class MouseLook : MonoBehaviour
         //得到Player的transform
         GameObject Player = GameObject.Find("Player");
         playerBody = Player.transform;
+        /*
         //设置相机位置
         Vector3 pos = transform.position;
         
         pos.y = playerBody.position.y+1.8f;
-        transform.position = pos;
+        transform.position = pos;*/
 
         //隐藏光标
         Cursor.lockState = CursorLockMode.Locked;

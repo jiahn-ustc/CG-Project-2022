@@ -44,7 +44,7 @@ public class WeaponController : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
-        bulletLeft = 50;
+        bulletLeft = 70;
         shooterPoint = GameObject.Find("ShootPoint").transform;
         currentBullets = bulletsMag;
         reloadInputName = KeyCode.R;
