@@ -12,6 +12,8 @@ public class WeaponController : MonoBehaviour
     public int bulletLeft = 50;//备弹
     public int currentBullets;//当前子弹数量
 
+    public float damage = 20f;
+
     public float fireRate = 0.1f;//射速，越小射击速度越快
     private float fireTimer=0f;//计时器
 
@@ -104,6 +106,12 @@ public class WeaponController : MonoBehaviour
             //   Debug.Log(hit.transform.name + "打到了"); 
             GameObject hitParticleEffect= Instantiate(hitParticle, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));//实例出子弹击中的特效
             GameObject bullectHoleEffect= Instantiate(bullectHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal)) ;//实例出弹孔的特效
+            
+            Damageable damageable = hit.collider.GetComponent<Damageable>();
+            if(damageable)
+            {
+                damageable.InflictDamage(damage);
+            }
 
             Destroy(hitParticleEffect, 1f);
             Destroy(bullectHoleEffect, 3f);

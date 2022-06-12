@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /*控制玩家移动*/
 public class PlayerMovement : MonoBehaviour
@@ -12,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public bool isRun;
     public bool isWalk;
     public Vector3 moveDirection;//移动方向
+    public float maxHealth = 200f;
 
     public bool isJump;
     public float jumpForce = 1f;//跳跃力度
@@ -29,16 +31,19 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip walkingSound;
     public AudioClip runningSound;
 
+    private float _currentHealth;
+
+    private void Awake()
+    {
+        _currentHealth = maxHealth;
+    }
 
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
         runInputName = KeyCode.LeftShift;//设置奔跑按键为LeftShift
         jumpInputName = "Jump";//设置跳跃按键
-        walkSpeed = 5f;
-        runSpeed = 20f;
-        jumpForce = 1f;
-        gravity = -20f;
+ 
 
         audioSource = GetComponent<AudioSource>();//得到声音源组件
     }
@@ -101,5 +106,46 @@ public class PlayerMovement : MonoBehaviour
     public void CheckGround()
     {
         isGround = characterController.isGrounded;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        OnHitPlayer(other);
+    }
+
+    private void OnHitPlayer(Collider other)
+    {
+        if(other.CompareTag("EnemyBullet"))
+        {
+            Bullet enemyBullet = other.GetComponent<Bullet>();
+            _currentHealth -= enemyBullet.damage;
+            StartCoroutine(routine: OnDamage());
+
+            if(other.GetComponent<Rigidbody>())
+            {
+                Destroy(other.gameObject);
+            }
+        }
+        if(other.CompareTag("MeleeArea"))
+        {
+            print(message: "player hit");
+            _currentHealth -= 10;
+            StartCoroutine(OnDamage());
+        }
+    }
+
+    IEnumerator OnDamage()
+    {
+        if(_currentHealth < 0)
+        {
+            OnDie();
+        }
+
+        yield return new WaitForSeconds(0.2f);
+    }
+
+    private void OnDie()
+    {
+        SceneManager.LoadScene("Map_v2");
     }
 }

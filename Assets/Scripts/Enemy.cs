@@ -1,0 +1,126 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+
+public class Enemy : MonoBehaviour
+{
+    public enum Type { Melee, Range}
+
+    public Type enemyType;
+    public Transform target;
+    public BoxCollider meleeArea;
+    public GameObject bullet;
+
+
+    private Rigidbody _rigidbody;
+    private NavMeshAgent _navMeshAgent;
+    private Animator _animator;
+    private bool _isChase;
+    private float _targetRadius;
+    private float _targetRange;
+    private bool _isAttack;
+    private Health _health;
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+        _navMeshAgent = GetComponent<NavMeshAgent>();
+        _animator = GetComponentInChildren<Animator>();
+        _health = GetComponent<Health>();
+        Invoke(methodName: "ChaseStart", time: 2);
+    }
+
+    private void ChaseStart()
+    {
+        _isChase = true;
+
+        if(_animator)
+        {
+            _animator.SetBool(name:"isWalk", value:true);
+        }
+    }
+
+    private void FreeVelocity()
+    {
+        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.angularVelocity = Vector3.zero;
+    }
+
+    private void Update()
+    {
+        if(_navMeshAgent.enabled && !_health.isDead)
+        {
+            _navMeshAgent.SetDestination(target.position);
+            _navMeshAgent.isStopped = !_isChase;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if(_isChase)
+        {
+            FreeVelocity();
+        }
+
+        Targeting();
+
+    }
+
+    private void Targeting()
+    {
+        if(enemyType == Type.Melee)
+        {
+            _targetRadius = 0.5f;
+            _targetRange = 2f;
+        }
+        else if(enemyType == Type.Range)
+        {
+            _targetRadius = 0.5f;
+            _targetRange = 10f;
+        }
+        
+
+        RaycastHit[] hits = Physics.SphereCastAll(origin: transform.position, _targetRadius, direction: transform.forward, maxDistance: _targetRange, LayerMask.GetMask(layerNames: "Player"));
+
+        if(hits.Length > 0 && !_isAttack)
+        {
+            StartCoroutine(Attack());
+        }
+    }
+
+    IEnumerator Attack()
+    {
+        _isChase = false;
+        _isAttack = true;
+
+        _animator.SetBool(name: "isAttack", value: true);
+
+        if(enemyType == Type.Melee)
+        {
+            yield return new WaitForSeconds(0.2f);
+
+            meleeArea.enabled = true;
+
+            yield return new WaitForSeconds(1f);
+
+            meleeArea.enabled = false;
+
+            yield return new WaitForSeconds(1f);
+        }
+       else if(enemyType == Type.Range)
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            GameObject instantBullet = Instantiate(bullet, transform.position, transform.rotation);
+            Rigidbody rigidbodyBullet = instantBullet.GetComponent<Rigidbody>();
+            rigidbodyBullet.velocity = transform.forward * 20f;
+
+            yield return new WaitForSeconds(2f);
+        }
+
+        _isChase = true;
+        _isAttack = false;
+        _animator.SetBool(name: "isAttack", value: false);
+    }
+}
