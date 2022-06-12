@@ -18441,13 +18441,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  walkSpeed: 10
-  runSpeed: 17
+  walkSpeed: 5
+  runSpeed: 8
   isRun: 0
   isWalk: 0
   moveDirection: {x: 0, y: 0, z: 0}
   isJump: 0
-  jumpForce: 3
+  jumpForce: 1
   velocity: {x: 0, y: 0, z: 0}
   gravity: -20
   isGround: 0

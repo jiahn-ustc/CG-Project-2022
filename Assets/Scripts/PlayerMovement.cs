@@ -35,10 +35,7 @@ public class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         runInputName = KeyCode.LeftShift;//设置奔跑按键为LeftShift
         jumpInputName = "Jump";//设置跳跃按键
-        walkSpeed = 5f;
-        runSpeed = 20f;
-        jumpForce = 1f;
-        gravity = -20f;
+       
 
         audioSource = GetComponent<AudioSource>();//得到声音源组件
     }
