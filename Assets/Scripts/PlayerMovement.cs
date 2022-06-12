@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /*控制玩家移动*/
 public class PlayerMovement : MonoBehaviour
@@ -11,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     public float runSpeed = 10f;
     public bool isRun;
     public bool isWalk;
+    public bool isAttack;//角色是否受到攻击
     public Vector3 moveDirection;//移动方向
 
     public bool isJump;
@@ -19,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = -20f;//设置重力
 
     public bool isGround;
+    public Slider BloodUI;
 
     [Header("按键设置")]
     [SerializeField][Tooltip("奔跑按键")]private KeyCode runInputName;
@@ -35,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         runInputName = KeyCode.LeftShift;//设置奔跑按键为LeftShift
         jumpInputName = "Jump";//设置跳跃按键
-       
+        isAttack = false;
 
         audioSource = GetComponent<AudioSource>();//得到声音源组件
     }
@@ -92,11 +95,24 @@ public class PlayerMovement : MonoBehaviour
         if(isJump && isGround)
         {
             velocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);//跳的瞬间，velocity.y为一正值
+            attacked(10);//跳跃一次，血条减10
         }
     }
     //判断角色是否在地面上
     public void CheckGround()
     {
         isGround = characterController.isGrounded;
+    }
+
+  
+
+    //人物受到攻击
+    public void attacked(float attackValue)
+    {
+        if (BloodUI.value > attackValue)
+            BloodUI.value -= attackValue;
+        else
+            BloodUI.value = 0;
+        Debug.Log("血条为" + BloodUI.value);
     }
 }
