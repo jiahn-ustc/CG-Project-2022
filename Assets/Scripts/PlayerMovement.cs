@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip walkingSound;
     public AudioClip runningSound;
 
-    private float _currentHealth;
+    public float _currentHealth;
 
     private void Awake()
     {
@@ -49,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
         isAttack = false;
 
         audioSource = GetComponent<AudioSource>();//得到声音源组件
+        BloodUI.value = BloodUI.maxValue;
     }
     private void Update()
     {
@@ -128,18 +129,20 @@ public class PlayerMovement : MonoBehaviour
             {
                 Destroy(other.gameObject);
             }
+            attacked(enemyBullet.damage);
         }
         if(other.CompareTag("MeleeArea"))
         {
             print(message: "player hit");
             _currentHealth -= 10;
             StartCoroutine(OnDamage());
+            attacked(10);
         }
     }
 
     IEnumerator OnDamage()
     {
-        if(_currentHealth < 0)
+        if(BloodUI.value<=0)
         {
             OnDie();
         }
@@ -161,5 +164,14 @@ public class PlayerMovement : MonoBehaviour
             BloodUI.value = 0;
         Debug.Log("血条为" + BloodUI.value);
 
+    }
+
+
+    public void addHealth(float health)
+    {
+        if (BloodUI.value + health > BloodUI.maxValue)
+            BloodUI.value = BloodUI.maxValue;
+        else
+            BloodUI.value += health;
     }
 }

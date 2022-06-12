@@ -6,6 +6,7 @@ public class Health : MonoBehaviour
 {
     public float maxHealth = 100f;
     public bool isDead { get; private set; }
+    //public PlayerMovement PM;
 
     private float _currentHealth;
 
@@ -35,7 +36,7 @@ public class Health : MonoBehaviour
             mesh.material.color = Color.red;
         }
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.01f);
 
         if(_currentHealth > 0)
         {
@@ -52,6 +53,7 @@ public class Health : MonoBehaviour
             }
 
             isDead = true;
+            // PM.addHealth(80);
             _animator.SetTrigger(name:"doDie");
             Destroy(gameObject, t:3);
         }
