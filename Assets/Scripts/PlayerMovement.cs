@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /*控制玩家移动*/
 public class PlayerMovement : MonoBehaviour
@@ -12,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public float runSpeed = 10f;
     public bool isRun;
     public bool isWalk;
+    public bool isAttack;//角色是否受到攻击
     public Vector3 moveDirection;//移动方向
     public float maxHealth = 200f;
 
@@ -21,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = -20f;//设置重力
 
     public bool isGround;
+    public Slider BloodUI;
 
     [Header("按键设置")]
     [SerializeField][Tooltip("奔跑按键")]private KeyCode runInputName;
@@ -43,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         runInputName = KeyCode.LeftShift;//设置奔跑按键为LeftShift
         jumpInputName = "Jump";//设置跳跃按键
- 
+        isAttack = false;
 
         audioSource = GetComponent<AudioSource>();//得到声音源组件
     }
@@ -147,5 +150,16 @@ public class PlayerMovement : MonoBehaviour
     private void OnDie()
     {
         SceneManager.LoadScene("Map_v2");
+    }
+
+    //人物受到攻击
+    public void attacked(float attackValue)
+    {
+        if (BloodUI.value > attackValue)
+            BloodUI.value -= attackValue;
+        else
+            BloodUI.value = 0;
+        Debug.Log("血条为" + BloodUI.value);
+
     }
 }
