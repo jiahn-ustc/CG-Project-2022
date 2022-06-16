@@ -113,7 +113,7 @@ public class WeaponController : MonoBehaviour
                 damageable.InflictDamage(damage);
             }
 
-            Destroy(hitParticleEffect, 1f);
+            Destroy(hitParticleEffect, 5f);
             Destroy(bullectHoleEffect, 3f);
         }
         PlayShootSound();//≤•∑≈…‰ª˜“Ù–ß
