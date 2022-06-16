@@ -7,7 +7,7 @@ using UnityEngine;
 //摄像机上下旋转实现上下旋转
 public class MouseLook : MonoBehaviour
 {
-    public float mouseSensitivity = 100f;//视线灵敏度
+    public float mouseSensitivity = 200f;//视线灵敏度
     public Transform playerBody;//玩家位置
     public float xRotation = 0f;
     

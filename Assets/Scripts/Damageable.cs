@@ -5,7 +5,7 @@ using UnityEngine;
 public class Damageable : MonoBehaviour
 {
     private Health _health;
-
+    public PlayerMovement PM;
     private void Awake()
     {
         _health = GetComponent<Health>();
@@ -13,6 +13,7 @@ public class Damageable : MonoBehaviour
 
     public void InflictDamage(float damage)
     {
+        PM.addHealth(0.5f *damage);
         _health.TakeDamage(damage);
     }
 }
