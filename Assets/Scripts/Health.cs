@@ -5,6 +5,7 @@ using UnityEngine;
 public class Health : MonoBehaviour
 {
     public float maxHealth = 100f;
+    public bool isInstantDie;
     public bool isDead { get; private set; }
     //public PlayerMovement PM;
 
@@ -54,8 +55,16 @@ public class Health : MonoBehaviour
 
             isDead = true;
             // PM.addHealth(80);
-            _animator.SetTrigger(name:"doDie");
-            Destroy(gameObject, t:3);
+
+            if(isInstantDie)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                _animator.SetTrigger(name: "doDie");
+                Destroy(gameObject, t: 3);
+            }
         }
     }
 }

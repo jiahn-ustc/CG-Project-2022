@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool isGround;
     public Slider BloodUI;
+    private bool _isBossAttack;
 
     [Header("按键设置")]
     [SerializeField][Tooltip("奔跑按键")]private KeyCode runInputName;
@@ -66,6 +67,8 @@ public class PlayerMovement : MonoBehaviour
         isWalk = (Mathf.Abs(h) > 0 || Mathf.Abs(v) > 0) ? true : false;
         speed = isRun ? runSpeed : walkSpeed;
 
+        if (_isBossAttack)
+            v = -5f;
         moveDirection = (transform.right * h + transform.forward * v).normalized;
         characterController.Move(moveDirection*speed*Time.deltaTime);
         
@@ -133,10 +136,13 @@ public class PlayerMovement : MonoBehaviour
         }
         if(other.CompareTag("MeleeArea"))
         {
-            print(message: "player hit");
-            _currentHealth -= 10;
+            MeleeAttacker meleeAttacker = other.GetComponent<MeleeAttacker>();
+            _currentHealth -= meleeAttacker.damage;
+
+            _isBossAttack = other.name == "Boss Melee Area";
             StartCoroutine(OnDamage());
-            attacked(10);
+
+            attacked(meleeAttacker.damage);
         }
     }
 
@@ -148,11 +154,17 @@ public class PlayerMovement : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.2f);
+        _isBossAttack = false;
     }
 
     private void OnDie()
     {
         SceneManager.LoadScene("Map_v2");
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        OnHitPlayer(other.collider);
     }
 
     //人物受到攻击

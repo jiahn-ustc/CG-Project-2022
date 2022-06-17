@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    public enum Type { Melee, Range}
+    public enum Type { Melee, Range, Boss}
 
     public Type enemyType;
     public Transform target;
@@ -14,21 +14,24 @@ public class Enemy : MonoBehaviour
     public GameObject bullet;
 
 
-    private Rigidbody _rigidbody;
-    private NavMeshAgent _navMeshAgent;
-    private Animator _animator;
+    protected Rigidbody _rigidbody;
+    protected NavMeshAgent _navMeshAgent;
+    protected Animator _animator;
+    protected Health _health;
+
     private bool _isChase;
     private float _targetRadius;
     private float _targetRange;
     private bool _isAttack;
-    private Health _health;
+    
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _animator = GetComponentInChildren<Animator>();
         _health = GetComponent<Health>();
-        Invoke(methodName: "ChaseStart", time: 2);
+        if(enemyType != Type.Boss)
+            Invoke(methodName: "ChaseStart", time: 2);
     }
 
     private void ChaseStart()
@@ -49,7 +52,12 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if(_navMeshAgent.enabled && !_health.isDead)
+        if(_health.isDead)
+        {
+            StopAllCoroutines();
+        }
+
+        if(_navMeshAgent.enabled && !_health.isDead && enemyType != Type.Boss)
         {
             _navMeshAgent.SetDestination(target.position);
             _navMeshAgent.isStopped = !_isChase;
@@ -62,8 +70,8 @@ public class Enemy : MonoBehaviour
         {
             FreeVelocity();
         }
-
-        Targeting();
+        if(enemyType != Type.Boss)
+            Targeting();
 
     }
 
